@@ -3,7 +3,7 @@
 Securing RESTful web APIs is challenging. This spec is intended to document
 an HMAC message format for RESTful web APIs.
 
-It document is **experimental** and subject to change.
+This document is **experimental** and subject to change.
 
 [HMAC authentication](http://en.wikipedia.org/wiki/Hash-based_message_authentication_code)
 is a shared-secret cryptography method where signatures are generated on the
