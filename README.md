@@ -1,7 +1,6 @@
 # HTTP HMAC Spec
 
-Securing RESTful web APIs is challenging. This spec is intended to document
-an HMAC message format for RESTful web APIs.
+This spec documents an HMAC message format for securing RESTful web APIs.
 
 This document is **experimental** and subject to change.
 
