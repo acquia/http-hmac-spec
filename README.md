@@ -70,7 +70,7 @@ The message is a concatenated string  generated from the following parts:
 
 Basic authentication is the simplest way to add authentication to a REST API,
 however it is generally considered the least secure authentication method since
-the hashed password must be sent on every API request.
+the same hashed password is sent on every API request.
 
 ## Why not OAuth 1.0a?
 
