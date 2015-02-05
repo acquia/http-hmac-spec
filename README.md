@@ -37,8 +37,8 @@ Message =
 
 The value of the `Authorization` header contains the following parts:
 
-* `Provider`: The provider, for example "Acquia"
-* `ID`: The API key's unique identifier
+* `Provider`: The provider, for example "Acquia", "MyCompany", etc.
+* `ID`: The API key's unique identifier, which is an arbitrary string
 * `Signature`: The base64 encoded HMAC digest as described below
 
 #### Signature
