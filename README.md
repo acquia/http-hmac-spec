@@ -63,40 +63,10 @@ The message is a concatenated string  generated from the following parts:
   * Each header is separated by a newline in the concatenated string
 * `Resource`: The HTTP request path + query string, e.g. `/resource?key=value`
 
-## Implementations
+## Further Reading
 
-Refer to the [wiki](https://github.com/acquia/http-hmac-spec/wiki#implementations) for implementations in various languages.
-
-## FAQ
-
-#### Why not HTTP basic authentication?
-
-Basic authentication is the simplest way to add authentication to a REST API,
-however it is generally considered the least secure authentication method since
-the same hashed password is sent on every API request. HMAC based authentication
-schemes do not transmit the shared secret over the wire and generate unique
-signatures for each request. The hashing strategy provided by this spec mitigates
-replay attacks and prevents data from being tampered with while in transit to
-the endpoint.
-
-#### Why not OAuth 1.0a?
-
-OAuth 1.0a is a widely adopted protocol that also uses an HMAC-based algorithm
-to sign and authenticate API requests. The main security advantage that OAuth
-1.0a has over bare HMAC authentication systems is the "request token" workflow
-that enables browsers to initiate authentication requests on behalf of a server
-without ever being passed the shared secret.
-
-The downside of this technique is the overall complexity it adds by requiring
-the application making requests to implement the OAuth 1.0a protocol as well. If
-passing the shared secret in a browser is not a concern for the app, then bare
-HMAC authentication systems can provide equivalent security with less
-complexity.
-
-#### Why not OAuth 2.0?
-
-This is best explained by Eran Hammer's [OAuth 2.0 and the Road to Hell](http://hueniverse.com/2012/07/26/oauth-2-0-and-the-road-to-hell/)
-blog post explaining why he resigned as lead author and editor of the spec.
+Refer to the [wiki](https://github.com/acquia/http-hmac-spec/wiki)
+for frequently asked questions and a list of implementations in various languages.
 
 ## Attribution
 
