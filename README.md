@@ -57,7 +57,7 @@ The message is a concatenated string  generated from the following parts:
   * Note that in the message, the body is hashed using the MD5 algorithm
 * `Date`: The value of the "Date" header
   * The implementation may also read the timestamp from a custom header, e.g. `x-acquia-timestamp`
-* `Custom-Headers`: A canonicalized concatenation of specified custom headers
+* `Custom-Headers`: A canonicalized concatenation of optional custom headers
   * Each header is in `x-custom-header: value` format
   * Header names are lowercase
   * Multiple values are separated by a comma and space, e.g. `value1, value2`
