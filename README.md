@@ -70,7 +70,11 @@ The message is a concatenated string  generated from the following parts:
 
 Basic authentication is the simplest way to add authentication to a REST API,
 however it is generally considered the least secure authentication method since
-the same hashed password is sent on every API request.
+the same hashed password is sent on every API request. HMAC based authentication
+schemes do not transmit the shared secret over the wire and generate unique
+signatures for each request. The hashing strategy provided by this spec mitigates
+replay attacks and prevents data from being tampered with while in transit to
+the endpoint.
 
 #### Why not OAuth 1.0a?
 
