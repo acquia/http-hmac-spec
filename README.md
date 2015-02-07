@@ -64,6 +64,12 @@ The message is a concatenated string  generated from the following parts:
   * Each header is separated by a newline in the concatenated string
 * `Resource`: The HTTP request path + query string, e.g. `/resource?key=value`
 
+## Implementations
+
+* PHP - https://github.com/acquia/hmac-request
+* Go (planned) - https://github.com/acquia/http-hmac-go
+* Java (planned) - https://github.com/acquia/http-hmac-java
+
 ## FAQ
 
 #### Why not HTTP basic authentication?
