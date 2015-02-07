@@ -65,7 +65,7 @@ The message is a concatenated string  generated from the following parts:
 
 ## Implementations
 
-Refer to the [wiki](wiki#implementations) for implementations in various languages.
+Refer to the [wiki](https://github.com/acquia/http-hmac-spec/wiki#implementations) for implementations in various languages.
 
 ## FAQ
 
