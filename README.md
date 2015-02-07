@@ -11,8 +11,7 @@ authenticate API requests.
 
 ## Spec
 
-The following pseudocode illustrates the construction of the HTTP
-Authorization header and signature.
+The pseudocode below illustrates construction of the HTTP "Authorization" header and signature:
 
 ```
 Authorization = "Provider" + " " + ID + ":" + Signature;
