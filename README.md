@@ -60,7 +60,7 @@ The message is a concatenated string  generated from the following parts:
 * `Custom-Headers`: A canonicalized concatenation of specified custom headers
   * Each header is in `x-custom-header: value` format
   * Header names are lowercase
-  * Headers with multiple multiple values are separated by a comma and space, e.g. `value1, value2`
+  * Multiple values are separated by a comma and space, e.g. `value1, value2`
   * Each header is separated by a newline in the concatenated string
 * `Resource`: The HTTP request path + query string, e.g. `/resource?key=value`
 
