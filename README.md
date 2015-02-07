@@ -2,8 +2,6 @@
 
 This spec documents an HMAC message format for securing RESTful web APIs.
 
-This document is **experimental** and subject to change.
-
 [HMAC authentication](http://en.wikipedia.org/wiki/Hash-based_message_authentication_code)
 is a shared-secret cryptography method where signatures are generated on the
 client side and validated by the server in order to authenticate the request. It
@@ -91,3 +89,8 @@ complexity.
 This is best explained by Eran Hammer's [OAuth 2.0 and the Road to Hell](http://hueniverse.com/2012/07/26/oauth-2-0-and-the-road-to-hell/)
 blog post explaining why he resigned as lead author and editor of the spec.
 
+## Attribution
+
+The algorithm is modeled after [Amazon Web Service's](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html)
+implementation and in part is derived from the HMAC authentication system
+developed for [Acquia Search](https://www.acquia.com/products-services/acquia-network/cloud-services/acquia-search).
