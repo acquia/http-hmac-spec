@@ -65,11 +65,7 @@ The message is a concatenated string  generated from the following parts:
 
 ## Implementations
 
-* PHP - https://github.com/acquia/http-hmac-php
-* Go (in development) - https://github.com/acquia/http-hmac-go
-* Java (planned)
-* Ruby (planned)
-* JavaScript (planned)
+Refer to the [wiki](wiki#implementations) for implementations in various languages.
 
 ## FAQ
 
