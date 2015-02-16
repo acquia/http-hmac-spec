@@ -16,7 +16,7 @@ The pseudocode below illustrates construction of the HTTP "Authorization" header
 ```
 Authorization = "Provider" + " " + ID + ":" + Signature;
 
-Signature = Base64( HMAC-SHA1 )( SecretKey, Message ) );
+Signature = Base64( Algorithm )( SecretKey, Message ) );
 
 Message =
     HTTP-Verb + "\n" +
@@ -43,6 +43,7 @@ The value of the `Authorization` header contains the following parts:
 The signature is a base64 encoded binary HMAC digest generated from the
 following parts:
 
+* `Algorithm`: The cryptographic algorithm, e.g. "sha1", "sha256", etc.
 * `SecretKey`: The API key's shared secret
 * `Message`: The string being signed as described below
 
