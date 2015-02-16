@@ -16,7 +16,7 @@ The pseudocode below illustrates construction of the HTTP "Authorization" header
 ```
 Authorization = "Provider" + " " + ID + ":" + Signature;
 
-Signature = Base64( Algorithm )( SecretKey, Message ) );
+Signature = Base64( Algorithm( SecretKey, Message ) );
 
 Message =
     HTTP-Verb + "\n" +
