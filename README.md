@@ -53,8 +53,8 @@ The message is a concatenated string  generated from the following parts:
 
 * `HTTP-Verb`: The uppercase HTTP request method e.g. "GET", "POST"
 * `Request-Body`: The raw body of the HTTP request
-* `Content-Type`: The lowercase value of the "Content-type" header
   * Note that in the message, the body is hashed using the MD5 algorithm
+* `Content-Type`: The lowercase value of the "Content-type" header
 * `Date`: The value of the "Date" header
   * The implementation may also read the timestamp from a custom header, e.g. `x-acquia-timestamp`
 * `Custom-Headers`: A canonicalized concatenation of optional custom headers
