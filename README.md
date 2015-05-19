@@ -11,20 +11,29 @@ authenticate API requests.
 
 ## Spec
 
+All requests must be made using HTTPS.
+
+## Overview of Header and Signature
+
 The pseudocode below illustrates construction of the HTTP "Authorization" header and signature:
 
 ```
-Authorization = "Provider" + " " + ID + ":" + Signature;
+Authorization: acquia-http-hmac realm="Example",
+               id="identifier",
+               timestamp="1432075982.782971",
+               version=2.0,
+               signature="Signature"
 
-Signature = Base64( Algorithm( SecretKey, Message ) );
+Signature = Base64( HMAC( SecretKey, Signature-Base-String ) );
 
-Message =
+Signature-Base-String =
     HTTP-Verb + "\n" +
-    MD5( Request-Body ) + "\n" +
+    host  + "\n" +
+    Path + "\n" +
+    Header-Parameters + "\n" +
+    GET-Parameters  OR
     Content-Type + "\n" +
-    Date + "\n" +
-    Custom-Headers + "\n"
-    Resource
+    Body-Hash
 ;
 ```
 
@@ -34,35 +43,63 @@ Message =
 
 The value of the `Authorization` header contains the following parts:
 
-* `Provider`: The provider, for example "Acquia", "MyCompany", etc.
-* `ID`: The API key's unique identifier, which is an arbitrary string
-* `Signature`: The base64 encoded HMAC digest as described below
+* `realm`: The provider, for example "Acquia", "MyCompany", etc.
+* `id`: The API key's unique identifier, which is an arbitrary string
+* `timestamp`: A Unix timestamp (which may be treated by the server as a nonce) represented as a float with 6 digit (microtime) precision
+* `version`: the version of this spec
+* `signature`: the Signature (base64 encoded) as described below.
 
 #### Signature
 
 The signature is a base64 encoded binary HMAC digest generated from the
 following parts:
 
-* `Algorithm`: The cryptographic algorithm, e.g. "sha1", "sha256", etc.
+* `HMAC`: HMAC-sha256 algorithm
 * `SecretKey`: The API key's shared secret
-* `Message`: The string being signed as described below
+* `Signature Base String`: The string being signed as described below
 
-#### Message
+#### Signature Base String
 
-The message is a concatenated string  generated from the following parts:
+The signature base string is a concatenated string generated from the following parts:
 
 * `HTTP-Verb`: The uppercase HTTP request method e.g. "GET", "POST"
-* `Request-Body`: The raw body of the HTTP request
-  * Note that in the message, the body is hashed using the MD5 algorithm
-* `Content-Type`: The lowercase value of the "Content-type" header
-* `Date`: The value of the "Date" header
-  * The implementation may also read the timestamp from a custom header, e.g. `x-acquia-timestamp`
-* `Custom-Headers`: A canonicalized concatenation of optional custom headers
-  * Each header is in `x-custom-header: value` format
-  * Header names are lowercase
-  * Multiple values are separated by a comma and space, e.g. `value1, value2`
-  * Each header is separated by a newline in the concatenated string
-* `Resource`: The HTTP request path + query string, e.g. `/resource?key=value`
+*  The (lowercase) hostname, matching the HTTP "Host" request header field
+* `Path`: The HTTP request path + query string, e.g. `/resource/11`
+* `Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the realm, version, id, and timestamp from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded
+* `Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  Any GET query parameters.  Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded.
+* `Content-Type`: The lowercase value of the "Content-type" header, or empty string for a GET
+* `Body-Hash`: SHA-256 diget of the raw body of the HTTP request, for POST, PUT, PATH or other requests with a body, or an empty string for GET.
+
+#### GET Example
+
+https://example.acquiapipet.net/v1.0/task-status/133?limit=10
+
+Assuming the client ID is efdde334-fe7b-11e4-a322-1697f925ec7b and secret key is W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=
+
+Authorization header =
+```
+Authorization: acquia-http-hmac realm="Pipet service",
+               id="efdde334-fe7b-11e4-a322-1697f925ec7b",
+               timestamp="1432075982.782971",
+               version=2.0,
+               signature="wBdTK16+htNDZNC4hnp3f+dnulBjTjBbss4OMHsmKw8="
+```
+
+Signature-Base-String =
+```
+GET
+example.acquiapipet.net
+/v1.0/task-status/133
+id=efdde334-fe7b-11e4-a322-1697f925ec7b&realm=Pipet%20service&timestamp=1432075982.782971&version=2.0
+limit=10
+```
+
+note that content type and body hash are omitted for GET.
+
+#### POST Example
+
+
+
 
 ## Further Reading
 
@@ -73,4 +110,4 @@ for frequently asked questions and a list of implementations in various language
 
 The algorithm is modeled after [Amazon Web Service's](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html)
 implementation and in part is derived from the HMAC authentication system
-developed for [Acquia Search](https://www.acquia.com/products-services/acquia-network/cloud-services/acquia-search).
+developed for [Acquia Search](https://www.acquia.com/products-services/acquia-network/cloud-services/acquia-search) and [OAuth 1.0a](http://oauth.net/core/1.0a/) [RFC 5849](http://tools.ietf.org/html/rfc5849).
