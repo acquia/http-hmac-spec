@@ -84,7 +84,7 @@ Authorization: acquia-http-hmac realm="Pipet service",
                timestamp="1432075982.765341",
                nonce="d1954337-5319-4821-8427-115542e08d10",
                version=2.0,
-               signature="wBdTK16+htNDZNC4hnp3f+dnulBjTjBbss4OMHsmKw8="
+               signature="9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI="
 ```
 
 Signature-Base-String =
@@ -92,7 +92,7 @@ Signature-Base-String =
 GET
 example.acquiapipet.net
 /v1.0/task-status/133
-id=efdde334-fe7b-11e4-a322-1697f925ec7b&realm=Pipet%20service&timestamp=1432075982.782971&version=2.0
+id=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&timestamp=1432075982.782971&version=2.0
 limit=10
 ```
 
