@@ -45,7 +45,8 @@ The value of the `Authorization` header contains the following parts:
 
 * `realm`: The provider, for example "Acquia", "MyCompany", etc.
 * `id`: The API key's unique identifier, which is an arbitrary string
-* `timestamp`: A Unix timestamp (which may be treated by the server as a nonce) represented as a float with 6 digit (microtime) precision
+* `timestamp`: A Unix timestamp (which may be treated by the server as part of the nonce) represented as a float with 6 digit (microtime) precision
+* `nonce`:  a hex version 4 (or version 1) UUID.
 * `version`: the version of this spec
 * `signature`: the Signature (base64 encoded) as described below.
 
@@ -80,7 +81,8 @@ Authorization header =
 ```
 Authorization: acquia-http-hmac realm="Pipet service",
                id="efdde334-fe7b-11e4-a322-1697f925ec7b",
-               timestamp="1432075982.782971",
+               timestamp="1432075982.765341",
+               nonce="d1954337-5319-4821-8427-115542e08d10",
                version=2.0,
                signature="wBdTK16+htNDZNC4hnp3f+dnulBjTjBbss4OMHsmKw8="
 ```
