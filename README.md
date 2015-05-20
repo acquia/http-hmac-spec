@@ -55,14 +55,18 @@ The message is a concatenated string  generated from the following parts:
 * `Request-Body`: The raw body of the HTTP request
   * Note that in the message, the body is hashed using the MD5 algorithm
 * `Content-Type`: The lowercase value of the "Content-type" header
-* `Date`: The value of the "Date" header
-  * The implementation may also read the timestamp from a custom header, e.g. `x-acquia-timestamp`
+* `Date`: The value of the "Date" header. The Date general-header field represents the date and time at which the message was originated, having the same semantics as orig-date in RFC 822. The field value is an HTTP-date, as described in section 3.3.1; it MUST be sent in RFC 1123 [8]-date format.
 * `Custom-Headers`: A canonicalized concatenation of optional custom headers
   * Each header is in `x-custom-header: value` format
   * Header names are lowercase
   * Multiple values are separated by a comma and space, e.g. `value1, value2`
   * Each header is separated by a newline in the concatenated string
 * `Resource`: The HTTP request path + query string, e.g. `/resource?key=value`
+
+## Time validation
+
+It is recommended that the implementation does not except request older than 15 minutes and does not accept requests that were sent from "the future". Eg, requests with a timestamp more than 5 minutes out from the server's timestamp and not older than 15 minutes from the server's timestamp.
+Timestamp can be read from the Date field but also, alternatively from a custom header, e.g. `x-acquia-timestamp`.
 
 ## Further Reading
 
