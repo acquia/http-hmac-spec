@@ -109,7 +109,38 @@ note that content type and body hash are omitted for GET.
 
 #### POST Example
 
+https://example.acquiapipet.net/v1.0/task/
 
+non-auth headers:
+```
+Content-Type: application/json
+X-Acquia-Content-SHA256: 6paRNxUA7WawFxJpRp4cEixDjHq3jfIKX072k9slalo=
+```
+
+body:
+```
+{"method":"hi.bob","params":["5","4","8"]}
+```
+
+Authorization header =
+```
+Authorization: acquia-http-hmac realm="Pipet%20service",
+               id="efdde334-fe7b-11e4-a322-1697f925ec7b",
+               timestamp="1432075982.765341",
+               nonce="d1954337-5319-4821-8427-115542e08d10",
+               version="2.0",
+               signature="9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI="
+```
+
+Signature-Base-String =
+```
+POST
+example.acquiapipet.net
+/v1.0/task
+id=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&timestamp=1432075982.782971&version=2.0
+application/json
+9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI=
+```
 
 
 ## Further Reading
