@@ -88,7 +88,7 @@ Assuming the client ID is efdde334-fe7b-11e4-a322-1697f925ec7b and secret key is
 
 Authorization header =
 ```
-Authorization: acquia-http-hmac realm="Pipet service",
+Authorization: acquia-http-hmac realm="Pipet%20service",
                id="efdde334-fe7b-11e4-a322-1697f925ec7b",
                timestamp="1432075982.765341",
                nonce="d1954337-5319-4821-8427-115542e08d10",
