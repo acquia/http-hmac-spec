@@ -21,8 +21,11 @@ The pseudocode below illustrates construction of the HTTP "Authorization" header
 Authorization: acquia-http-hmac realm="Example",
                id="identifier",
                timestamp="1432075982.782971",
+               nonce="d1954337-5319-4821-8427-115542e08d10",
                version=2.0,
                signature="Signature"
+
+X-Acquia-Content-SHA256:
 
 Signature = Base64( HMAC( SecretKey, Signature-Base-String ) );
 
@@ -50,6 +53,12 @@ The value of the `Authorization` header contains the following parts:
 * `version`: the version of this spec
 * `signature`: the Signature (base64 encoded) as described below.
 
+Each value should be enclosed in double quotes and urlencoded (percent encoded).
+
+#### X-Acquia-Content-SHA256 Header
+
+The SHA-256 hash value used to generate the signature base string. This is analogous to the standard Content-MD5 header.
+
 #### Signature
 
 The signature is a base64 encoded binary HMAC digest generated from the
@@ -68,8 +77,8 @@ The signature base string is a concatenated string generated from the following 
 * `Path`: The HTTP request path + query string, e.g. `/resource/11`
 * `Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the realm, version, id, and timestamp from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded
 * `Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  Any GET query parameters.  Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded.
-* `Content-Type`: The lowercase value of the "Content-type" header, or empty string for a GET
-* `Body-Hash`: SHA-256 diget of the raw body of the HTTP request, for POST, PUT, PATH or other requests with a body, or an empty string for GET.
+* `Content-Type`: The lowercase value of the "Content-type" header, or omit for a GET or HEAD request.
+* `Body-Hash`: SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATH or other requests with a body, or an empty string for GET or HEAD.
 
 #### GET Example
 
@@ -83,7 +92,7 @@ Authorization: acquia-http-hmac realm="Pipet service",
                id="efdde334-fe7b-11e4-a322-1697f925ec7b",
                timestamp="1432075982.765341",
                nonce="d1954337-5319-4821-8427-115542e08d10",
-               version=2.0,
+               version="2.0",
                signature="9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI="
 ```
 
