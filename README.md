@@ -55,6 +55,8 @@ The value of the `Authorization` header contains the following parts:
 
 Each value should be enclosed in double quotes and urlencoded (percent encoded).
 
+Note that the name of this (standard) header is misleading - it carries authentication information.
+
 #### X-Acquia-Content-SHA256 Header
 
 The SHA-256 hash value used to generate the signature base string. This is analogous to the standard Content-MD5 header.
