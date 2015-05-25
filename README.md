@@ -11,7 +11,7 @@ authenticate API requests.
 
 ## Spec
 
-All requests must be made using HTTPS.
+Services implementing this spec must only accept requests using HTTPS.
 
 ## Overview of Header and Signature
 
@@ -41,6 +41,11 @@ Signature-Base-String =
 ```
 
 `"\n"` denotes a Unix-style line feed (ASCII code `0x0A`).
+
+#### Secret Key
+
+The secret key should be a 256 to 512 bit binary value. The secret key should be stored as a base64-encoded
+string representation and decoded to binary before use.
 
 #### Authorization Header
 
