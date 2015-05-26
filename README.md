@@ -53,7 +53,6 @@ The value of the `Authorization` header contains the following parts:
 
 * `realm`: The provider, for example "Acquia", "MyCompany", etc.
 * `id`: The API key's unique identifier, which is an arbitrary string
-* `timestamp`: A Unix timestamp (which may be treated by the server as part of the nonce) represented as a float with 6 digit (microtime) precision
 * `nonce`:  a hex version 4 (or version 1) UUID.
 * `version`: the version of this spec
 * `signature`: the Signature (base64 encoded) as described below.
@@ -62,9 +61,13 @@ Each value should be enclosed in double quotes and urlencoded (percent encoded).
 
 Note that the name of this (standard) header is misleading - it carries authentication information.
 
+#### X-Acquia-Timestamp Header
+
+A Unix timestamp (integer seconds since Jan 1, 1970 UTC). Required for all requests. If this value differs by more than 900 seconds (15 minutes) from the time of the server, the request will be rejected.
+
 #### X-Acquia-Content-SHA256 Header
 
-The SHA-256 hash value used to generate the signature base string. This is analogous to the standard Content-MD5 header.
+The SHA-256 hash value used to generate the signature base string. This is analogous to the standard Content-MD5 header. Required for any request except GET or HEAD.
 
 #### Signature
 
@@ -82,10 +85,11 @@ The signature base string is a concatenated string generated from the following 
 * `HTTP-Verb`: The uppercase HTTP request method e.g. "GET", "POST"
 *  The (lowercase) hostname, matching the HTTP "Host" request header field
 * `Path`: The HTTP request path + query string, e.g. `/resource/11`
-* `Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the realm, version, id, and timestamp from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded
-* `Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  Any GET query parameters.  Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded.
-* `Content-Type`: The lowercase value of the "Content-type" header, or omit for a GET or HEAD request.
-* `Body-Hash`: SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATH or other requests with a body, or an empty string for GET or HEAD.
+* `Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the id, nonce, realm, and version from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded
+* `Timestamp`:  The value of the X-Acquia-Timestamp header
+* `Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  Any query parameters for a GET or HEAD request.  Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded. Omit for requests other than GET or HEAD.
+* `Content-Type`: The lowercase value of the "Content-type" header. Omit for a GET or HEAD request.
+* `Body-Hash`: SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit for GET or HEAD.
 
 #### GET Example
 
@@ -97,10 +101,14 @@ Authorization header =
 ```
 Authorization: acquia-http-hmac realm="Pipet%20service",
                id="efdde334-fe7b-11e4-a322-1697f925ec7b",
-               timestamp="1432075982.765341",
                nonce="d1954337-5319-4821-8427-115542e08d10",
                version="2.0",
-               signature="9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI="
+               signature="noct7eQavSTgcE4vJRzUp4h6PM3i8JnwRadoB5LB5I8="
+```
+
+Other headers = 
+```
+X-Acquia-Timestamp: 1432075982
 ```
 
 Signature-Base-String =
@@ -108,7 +116,8 @@ Signature-Base-String =
 GET
 example.acquiapipet.net
 /v1.0/task-status/133
-id=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&timestamp=1432075982.782971&version=2.0
+id=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&version=2.0
+1432075982
 limit=10
 ```
 
@@ -118,8 +127,9 @@ note that content type and body hash are omitted for GET.
 
 https://example.acquiapipet.net/v1.0/task/
 
-non-auth headers:
+Other headers:
 ```
+X-Acquia-Timestamp: 1432075982
 Content-Type: application/json
 X-Acquia-Content-SHA256: 6paRNxUA7WawFxJpRp4cEixDjHq3jfIKX072k9slalo=
 ```
@@ -133,10 +143,9 @@ Authorization header =
 ```
 Authorization: acquia-http-hmac realm="Pipet%20service",
                id="efdde334-fe7b-11e4-a322-1697f925ec7b",
-               timestamp="1432075982.765341",
                nonce="d1954337-5319-4821-8427-115542e08d10",
                version="2.0",
-               signature="9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI="
+               signature="nyRyqfHW08ePp5E0zFGFVCvrNxVRO8Ju+0BU6Zixw5Q="
 ```
 
 Signature-Base-String =
@@ -144,7 +153,8 @@ Signature-Base-String =
 POST
 example.acquiapipet.net
 /v1.0/task
-id=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&timestamp=1432075982.782971&version=2.0
+id=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&version=2.0
+1432075982
 application/json
 9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI=
 ```
