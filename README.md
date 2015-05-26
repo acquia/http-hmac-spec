@@ -94,7 +94,7 @@ The signature base string is a concatenated string generated from the following 
 
 https://example.acquiapipet.net/v1.0/task-status/133?limit=10
 
-Assuming the client ID is efdde334-fe7b-11e4-a322-1697f925ec7b and secret key is W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=
+Assuming the client ID is efdde334-fe7b-11e4-a322-1697f925ec7b and bse64 encoded secret key is W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=
 
 Authorization header =
 ```
@@ -102,7 +102,7 @@ Authorization: acquia-http-hmac realm="Pipet%20service",
                id="efdde334-fe7b-11e4-a322-1697f925ec7b",
                nonce="d1954337-5319-4821-8427-115542e08d10",
                version="2.0",
-               signature="noct7eQavSTgcE4vJRzUp4h6PM3i8JnwRadoB5LB5I8="
+               signature="MRlPr/Z1WQY2sMthcaEqETRMw4gPYXlPcTpaLWS2gcc="
 ```
 
 Other headers = 
@@ -144,7 +144,7 @@ Authorization: acquia-http-hmac realm="Pipet%20service",
                id="efdde334-fe7b-11e4-a322-1697f925ec7b",
                nonce="d1954337-5319-4821-8427-115542e08d10",
                version="2.0",
-               signature="nyRyqfHW08ePp5E0zFGFVCvrNxVRO8Ju+0BU6Zixw5Q="
+               signature="df5m8PBJj5porD3Tkg8nxcQnNMA5wj9H5btygdRnABE="
 ```
 
 Signature-Base-String =
