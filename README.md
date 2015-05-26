@@ -94,7 +94,7 @@ The signature base string is a concatenated string generated from the following 
 
 https://example.acquiapipet.net/v1.0/task-status/133?limit=10
 
-Assuming the client ID is efdde334-fe7b-11e4-a322-1697f925ec7b and bse64 encoded secret key is W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=
+Assuming the client ID is efdde334-fe7b-11e4-a322-1697f925ec7b and base64 encoded secret key is W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=
 
 Authorization header =
 ```
@@ -157,6 +157,32 @@ id=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d
 1432075982
 application/json
 9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI=
+```
+
+## Response Validation
+
+The reponse from the server must include the following
+
+Response header =
+```
+X-Acquia-Content-HMAC-SHA256: UPiRBF/yd6po9Sv+1tBH5QmofBhQfm1R33okf4VyZtg=
+```
+
+The client should verify the reponse HMAC which authenticates the response body back from the server.
+
+#### Response Signature Base String
+
+
+The signature base string is a concatenated string generated from the following parts:
+
+* `Nonce`:  The nonce that was sent in the Authorization header.
+* `Body`: The response body (or empty string).
+
+Signature-Base-String =
+
+```
+d1954337-5319-4821-8427-115542e08d10
+{"id": 133, "status": "done"}
 ```
 
 
