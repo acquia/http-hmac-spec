@@ -20,12 +20,11 @@ The pseudocode below illustrates construction of the HTTP "Authorization" header
 ```
 Authorization: acquia-http-hmac realm="Example",
                id="identifier",
-               timestamp="1432075982.782971",
                nonce="d1954337-5319-4821-8427-115542e08d10",
                version=2.0,
                signature="Signature"
 
-X-Acquia-Content-SHA256:
+X-Acquia-Timestamp: 1432075982
 
 Signature = Base64( HMAC( SecretKey, Signature-Base-String ) );
 
@@ -33,8 +32,8 @@ Signature-Base-String =
     HTTP-Verb + "\n" +
     host  + "\n" +
     Path + "\n" +
-    Header-Parameters + "\n" +
-    GET-Parameters  OR
+    Query-Parameters + "\n" +
+    Header-Parameters + (except for GET/HEAD) "\n" +
     Content-Type + "\n" +
     Body-Hash
 ;
@@ -85,10 +84,10 @@ The signature base string is a concatenated string generated from the following 
 * `HTTP-Verb`: The uppercase HTTP request method e.g. "GET", "POST"
 *  The (lowercase) hostname, matching the HTTP "Host" request header field
 * `Path`: The HTTP request path + query string, e.g. `/resource/11`
+* `Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  Any query parameters or empty string.  Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded.
 * `Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the id, nonce, realm, and version from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded
 * `Timestamp`:  The value of the X-Acquia-Timestamp header
-* `Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  Any query parameters for a GET or HEAD request.  Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded. Omit for requests other than GET or HEAD.
-* `Content-Type`: The lowercase value of the "Content-type" header. Omit for a GET or HEAD request.
+* `Content-Type`: The lowercase value of the "Content-type" header (or empty string if absent). Omit for a GET or HEAD request.
 * `Body-Hash`: SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit for GET or HEAD.
 
 #### GET Example
@@ -116,9 +115,9 @@ Signature-Base-String =
 GET
 example.acquiapipet.net
 /v1.0/task-status/133
+limit=10
 id=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&version=2.0
 1432075982
-limit=10
 ```
 
 note that content type and body hash are omitted for GET.
@@ -153,6 +152,7 @@ Signature-Base-String =
 POST
 example.acquiapipet.net
 /v1.0/task
+
 id=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&version=2.0
 1432075982
 application/json
