@@ -1,6 +1,6 @@
 # HTTP HMAC Spec
 
-This spec documents an HMAC message format for securing RESTful web APIs.
+This spec documents an HMAC authentication format for securing RESTful web APIs.
 
 [HMAC authentication](http://en.wikipedia.org/wiki/Hash-based_message_authentication_code)
 is a shared-secret cryptography method where signatures are generated on the
@@ -25,7 +25,7 @@ Authorization: acquia-http-hmac realm="Example",
                headers="",
                signature="Signature"
 
-X-Acquia-Timestamp: 1432075982
+X-Authorization-Timestamp: 1432075982
 
 Signature = Base64( HMAC( SecretKey, Signature-Base-String ) );
 
@@ -64,11 +64,11 @@ Each value should be enclosed in double quotes and urlencoded (percent encoded).
 
 Note that the name of this (standard) header is misleading - it carries authentication information.
 
-#### X-Acquia-Timestamp Header
+#### X-Authorization-Timestamp Header
 
 A Unix timestamp (integer seconds since Jan 1, 1970 UTC). Required for all requests. If this value differs by more than 900 seconds (15 minutes) from the time of the server, the request will be rejected.
 
-#### X-Acquia-Content-SHA256 Header
+#### X-Authorization-Content-SHA256 Header
 
 The base64 encoded SHA-256 hash value used to generate the signature base string. This is analogous to the standard Content-MD5 header. Required for any request except GET or HEAD.
 
@@ -86,12 +86,11 @@ following parts:
 The signature base string is a concatenated string generated from the following parts:
 
 * `HTTP-Verb`: The uppercase HTTP request method e.g. "GET", "POST"
-*  The (lowercase) hostname, matching the HTTP "Host" request header field
-* `Path`: The HTTP request path + query string, e.g. `/resource/11`
-* `Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  Any query parameters or empty string.  Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded (urlencoded).
-* `Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the id, nonce, realm, and version from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded (urlencoded)
+*  The (lowercase) hostname, matching the HTTP "Host" request header field (including any port number)
+* `Path`: The HTTP request path with leading slash, e.g. `/resource/11`
+* `Parameters`: Any query parameters or empty string. This should be the exact string sent by the client, including urlencoding.
 * `Added Signed Headers`: The normalized header names and values specified in the headers parameter of the Authorization header. Names should be lower-cased, sorted by name, separated from value by a colon and the value followed by a newline so each extra header is on its own line.
-* `Timestamp`:  The value of the X-Acquia-Timestamp header
+* `Timestamp`:  The value of the X-Authorization-Timestamp header
 * `Content-Type`: The lowercase value of the "Content-type" header (or empty string if absent). Omit for a GET or HEAD request.
 * `Body-Hash`: SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit for GET or HEAD.
 
@@ -113,7 +112,7 @@ Authorization: acquia-http-hmac realm="Pipet%20service",
 
 Other headers = 
 ```
-X-Acquia-Timestamp: 1432075982
+X-Authorization-Timestamp: 1432075982
 ```
 
 Signature-Base-String =
@@ -134,9 +133,9 @@ https://example.acquiapipet.net/v1.0/task/
 
 Other headers:
 ```
-X-Acquia-Timestamp: 1432075982
+X-Authorization-Timestamp: 1432075982
 Content-Type: application/json
-X-Acquia-Content-SHA256: 6paRNxUA7WawFxJpRp4cEixDjHq3jfIKX072k9slalo=
+X-Authoization-Content-SHA256: 6paRNxUA7WawFxJpRp4cEixDjHq3jfIKX072k9slalo=
 ```
 
 body:
@@ -171,7 +170,7 @@ Except for HEAD requests, the reponse from the server must include the following
 
 Response header =
 ```
-X-Acquia-Content-HMAC-SHA256: UPiRBF/yd6po9Sv+1tBH5QmofBhQfm1R33okf4VyZtg=
+X-Server-Authorization-HMAC-SHA256: UPiRBF/yd6po9Sv+1tBH5QmofBhQfm1R33okf4VyZtg=
 ```
 
 The client should verify the reponse HMAC which authenticates the response body back from the server.
@@ -179,15 +178,17 @@ The client should verify the reponse HMAC which authenticates the response body 
 #### Response Signature Base String
 
 
-The signature base string is a concatenated string generated from the following parts:
+The response signature base string is a concatenated string generated from the following parts:
 
 * `Nonce`:  The nonce that was sent in the Authorization header.
+* `Timestamp`: The timestamp that was sent in the X-Authorization-Timestamp header
 * `Body`: The response body (or empty string).
 
 Signature-Base-String =
 
 ```
 d1954337-5319-4821-8427-115542e08d10
+1432075982
 {"id": 133, "status": "done"}
 ```
 
@@ -201,4 +202,4 @@ for frequently asked questions and a list of implementations in various language
 
 The algorithm is modeled after [Amazon Web Service's](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html)
 implementation and in part is derived from the HMAC authentication system
-developed for [Acquia Search](https://www.acquia.com/products-services/acquia-network/cloud-services/acquia-search) and [OAuth 1.0a](http://oauth.net/core/1.0a/) [RFC 5849](http://tools.ietf.org/html/rfc5849).
+developed for [Acquia Search](https://www.acquia.com/products-services/acquia-network/cloud-services/acquia-search). Elements of the spec were also informed by [OAuth 1.0a](http://oauth.net/core/1.0a/), [RFC 5849](http://tools.ietf.org/html/rfc5849), and [Hawk](https://github.com/hueniverse/hawk)
