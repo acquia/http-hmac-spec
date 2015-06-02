@@ -135,7 +135,7 @@ Other headers:
 ```
 X-Authorization-Timestamp: 1432075982
 Content-Type: application/json
-X-Authoization-Content-SHA256: 6paRNxUA7WawFxJpRp4cEixDjHq3jfIKX072k9slalo=
+X-Authorization-Content-SHA256: 6paRNxUA7WawFxJpRp4cEixDjHq3jfIKX072k9slalo=
 ```
 
 body:
