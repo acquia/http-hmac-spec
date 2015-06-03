@@ -1,3 +1,5 @@
+Note: This is inspired on the Hawk Spec and documentation.
+
 # HTTP HMAC Spec
 
 This spec documents an HMAC authentication format for securing RESTful web APIs.
@@ -276,12 +278,11 @@ any other response header field (e.g. Location) which can affect the client's be
 
 ### Future Time Manipulation
 
-The protocol relies on a clock sync between the client and server. To accomplish this, the server informs the client of its
-current time when an invalid timestamp is received. This happens in the form of a Date header in the response. See [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.18) as a motivation for this.
-
 If an attacker is able to manipulate this information and cause the client to use an incorrect time, it would be able to cause the client to generate authenticated requests using time in the future. Such requests will fail when sent by the client, and will not likely leave a trace on the server (given the common implementation of nonce, if at all enforced). The attacker will then be able to replay the request at the correct time without detection.
 
-The client must only use the time information provided by the server if:
+A solution to this problem would be a clock sync between the client and server. To accomplish this, the server informs the client of its current time when an invalid timestamp is received. This happens in the form of a Date header in the response. See [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.18) as a motivation for this.
+
+The client should only use the time information provided by the server if:
 * it was delivered over a TLS connection and the server identity has been verified, or
 * the MAC digest calculated using the same client credentials over the timestamp has been verified. (eg Response validation was successful)
 
