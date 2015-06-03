@@ -36,6 +36,8 @@ Note: 2.0 is not backwards compatible to 1.0 as the message to sign and the Head
 - [**Implementations**](#implementations)
 - [**Attribution**](#attribution)
 
+## Introduction
+TBD, see the Hawk spec for inspiration
 
 ## Spec
 
