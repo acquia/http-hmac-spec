@@ -17,7 +17,7 @@ Note: 2.0 is not backwards compatible to 1.0 as the message to sign and the Head
 
 - [**Introduction**](#introduction)
 - [**Specification**](#spec)
-- [**Overview of Header and Signature**](#overview-header)
+- [**Overview of Header and Signature**](#overview-of-header-and-signature)
 - [**Response Validation**](#response-validation)
 - [**Security Considerations**](#security-considerations)
   - [MAC Keys Transmission](#mac-keys-transmission)
