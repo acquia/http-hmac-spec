@@ -74,7 +74,7 @@ The base64 encoded SHA-256 hash value used to generate the signature base string
 
 #### X-Authenticated-Id Header
 
-If the X-Authenticated-Id is present in the request, the client implementing the validation of the request should dismiss the request and return "unauthenticated". This header is reserved for servers or proxies who want to validate requests and forward requests to backends. Backends can read this added header to understand if it was authenticated. Use this with caution and careful consideration as adding this header does not imply the information is secure.
+If the X-Authenticated-Id is present in the request, the client implementing the validation of the request should reject the request and return "unauthenticated". This header is reserved for servers or proxies who want to validate requests and forward requests to backends. Backends can read this added header to understand if it was authenticated. Use this with caution and careful consideration as adding this header does not imply the information is secure.
 
 #### Signature
 
