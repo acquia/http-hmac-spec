@@ -34,7 +34,6 @@ Signature-Base-String =
     host  + "\n" +
     Path + "\n" +
     Query-Parameters + "\n" +
-    Header-Parameters + "\n" +
     Added-Signed-Headers (if any) + "\n" +
     Timestamp + (except for GET/HEAD) "\n" +
     Content-Type + "\n" +
