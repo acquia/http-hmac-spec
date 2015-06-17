@@ -89,6 +89,7 @@ The signature base string is a concatenated string generated from the following 
 *  The (lowercase) hostname, matching the HTTP "Host" request header field (including any port number)
 * `Path`: The HTTP request path with leading slash, e.g. `/resource/11`
 * `Parameters`: Any query parameters or empty string. This should be the exact string sent by the client, including urlencoding.
+* `Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the id, nonce, realm, and version from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded (urlencoded)
 * `Added Signed Headers`: The normalized header names and values specified in the headers parameter of the Authorization header. Names should be lower-cased, sorted by name, separated from value by a colon and the value followed by a newline so each extra header is on its own line.
 * `Timestamp`:  The value of the X-Authorization-Timestamp header
 * `Content-Type`: The lowercase value of the "Content-type" header (or empty string if absent). Omit for a GET or HEAD request.
