@@ -46,8 +46,7 @@ Signature-Base-String =
 
 #### Secret Key
 
-The secret key should be a 256 to 512 bit binary value. The secret key should be stored as a base64-encoded
-string representation and decoded to binary before use.
+The secret key should be a 256 to 512 bit binary value. The secret key will normally be stored as a base64-encoded or hex-encoded string representation, but must be decoded to the binary value before use.
 
 #### Authorization Header
 
