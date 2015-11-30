@@ -29,7 +29,6 @@ X-Authorization-Timestamp: 1432075982
 
 Signature = Base64( HMAC( SecretKey, Signature-Base-String ) );
 
-if Content-Length > 0
 Signature-Base-String =
     HTTP-Verb + "\n" +
     Host  + "\n" +
@@ -70,7 +69,7 @@ A Unix timestamp (integer seconds since Jan 1, 1970 UTC). Required for all reque
 
 #### X-Authorization-Content-SHA256 Header
 
-The base64 encoded SHA-256 hash value used to generate the signature base string. This is analogous to the standard Content-MD5 header. Required for any request where Content-Length > 0.
+The base64 encoded SHA-256 hash value used to generate the signature base string. This is analogous to the standard Content-MD5 header. Required for any request where Content-Length is not 0 (for example, a POST request with a body).
 
 #### Signature
 
