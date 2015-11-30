@@ -37,7 +37,7 @@ Signature-Base-String =
     Authorization-Header-Parameters + "\n" +
     Added-Signed-Headers (if any) + "\n" +
     Timestamp +
-    (if Content-Length > 0)
+    (omit below if Content-Length is 0)
     "\n" + Content-Type +
     "\n" + Body-Hash
 ;
