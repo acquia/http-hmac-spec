@@ -31,16 +31,16 @@ Signature = Base64( HMAC( SecretKey, Signature-Base-String ) );
 
 Signature-Base-String =
     HTTP-Verb + "\n" +
-    host  + "\n" +
+    Host  + "\n" +
     Path + "\n" +
     Query-Parameters + "\n" +
     Authorization-Header-Parameters + "\n" +
     Added-Signed-Headers (if any) + "\n" +
-    Timestamp + (except for GET/HEAD) "\n" +
-    Content-Type + "\n" +
-    Body-Hash
+    Timestamp +
+    (omit below if Content-Length is 0)
+    "\n" + Content-Type +
+    "\n" + Body-Hash
 ;
-```
 
 `"\n"` denotes a Unix-style line feed (ASCII code `0x0A`).
 
@@ -69,7 +69,7 @@ A Unix timestamp (integer seconds since Jan 1, 1970 UTC). Required for all reque
 
 #### X-Authorization-Content-SHA256 Header
 
-The base64 encoded SHA-256 hash value used to generate the signature base string. This is analogous to the standard Content-MD5 header. Required for any request except GET or HEAD.
+The base64 encoded SHA-256 hash value used to generate the signature base string. This is analogous to the standard Content-MD5 header. Required for any request where Content-Length is not 0 (for example, a POST request with a body).
 
 #### Signature
 
@@ -91,8 +91,8 @@ The signature base string is a concatenated string generated from the following 
 * `Authorization-Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the id, nonce, realm, and version from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded (urlencoded)
 * `Added Signed Headers`: The normalized header names and values specified in the headers parameter of the Authorization header. Names should be lower-cased, sorted by name, separated from value by a colon and the value followed by a newline so each extra header is on its own line.
 * `Timestamp`:  The value of the X-Authorization-Timestamp header
-* `Content-Type`: The lowercase value of the "Content-type" header (or empty string if absent). Omit for a GET or HEAD request.
-* `Body-Hash`: The base64 encoded SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit for GET or HEAD. This should be identical to the string sent as the X-Authorization-Content-SHA256 header.
+* `Content-Type`: The lowercase value of the "Content-type" header (or empty string if absent). Omit if Content-Length is 0.
+* `Body-Hash`: The base64 encoded SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit if Content-Length is 0. This should be identical to the string sent as the X-Authorization-Content-SHA256 header.
 
 #### GET Example
 
@@ -110,7 +110,7 @@ Authorization: acquia-http-hmac realm="Pipet%20service",
                signature="MRlPr/Z1WQY2sMthcaEqETRMw4gPYXlPcTpaLWS2gcc="
 ```
 
-Other headers = 
+Other headers =
 ```
 X-Authorization-Timestamp: 1432075982
 ```
@@ -135,7 +135,7 @@ Other headers:
 ```
 X-Authorization-Timestamp: 1432075982
 Content-Type: application/json
-X-Authorization-Content-SHA256: 6paRNxUA7WawFxJpRp4cEixDjHq3jfIKX072k9slalo=
+X-Authorization-Content-SHA256: 9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI=
 ```
 
 body:
@@ -149,7 +149,7 @@ Authorization: acquia-http-hmac realm="Pipet%20service",
                id="efdde334-fe7b-11e4-a322-1697f925ec7b",
                nonce="d1954337-5319-4821-8427-115542e08d10",
                version="2.0",
-               signature="df5m8PBJj5porD3Tkg8nxcQnNMA5wj9H5btygdRnABE="
+               signature="XDBaXgWFCY3aAgQvXyGXMbw9Vds2WPKJe2yP+1eXQgM="
 ```
 
 Signature-Base-String =
@@ -170,7 +170,7 @@ Except for HEAD requests, the reponse from the server must include the following
 
 Response header =
 ```
-X-Server-Authorization-HMAC-SHA256: UPiRBF/yd6po9Sv+1tBH5QmofBhQfm1R33okf4VyZtg=
+X-Server-Authorization-HMAC-SHA256: M4wYp1MKvDpQtVOnN7LVt9L8or4pKyVLhfUFVJxHemU=
 ```
 
 The client should verify the reponse HMAC which authenticates the response body back from the server.
