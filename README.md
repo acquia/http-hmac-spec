@@ -41,6 +41,7 @@ Signature-Base-String =
     "\n" + Content-Type +
     "\n" + Body-Hash
 ;
+```
 
 `"\n"` denotes a Unix-style line feed (ASCII code `0x0A`).
 
