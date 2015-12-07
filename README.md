@@ -71,6 +71,10 @@ A Unix timestamp (integer seconds since Jan 1, 1970 UTC). Required for all reque
 
 The base64 encoded SHA-256 hash value used to generate the signature base string. This is analogous to the standard Content-MD5 header. Required for any request where Content-Length is not 0 (for example, a POST request with a body).
 
+#### X-Authenticated-Id Header
+
+If the X-Authenticated-Id is present in the request, the client implementing the validation of the request should reject the request and return "unauthenticated". This header is reserved for servers or proxies who want to validate requests and forward requests to backends. Backends can read this added header to understand if it was authenticated. Use this with caution and careful consideration as adding this header only guarantees it was authenticated to that ID.
+
 #### Signature
 
 The signature is a base64 encoded binary HMAC digest generated from the
