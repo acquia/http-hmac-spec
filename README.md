@@ -63,6 +63,7 @@ Signature = Base64( HMAC( SecretKey, Signature-Base-String ) );
 
 Signature-Base-String =
     HTTP-Verb + "\n" +
+    Host + "\n" +
     Path + "\n" +
     Query-Parameters + "\n" +
     Authorization-Header-Parameters + "\n" +
