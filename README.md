@@ -121,7 +121,7 @@ following parts:
 The signature base string is a concatenated string generated from the following parts:
 
 * `HTTP-Verb`: The uppercase HTTP request method e.g. "GET", "POST"
-*  The (lowercase) hostname, matching the HTTP "Host" request header field (including any port number)
+* `Host`: The (lowercase) hostname, matching the HTTP "Host" request header field (including any port number)
 * `Path`: The HTTP request path with leading slash, e.g. `/resource/11`
 * `Parameters`: Any query parameters or empty string. This should be the exact string sent by the client, including urlencoding.
 * `Authorization-Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the id, nonce, realm, and version from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded (urlencoded)
