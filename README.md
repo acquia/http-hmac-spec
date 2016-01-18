@@ -67,7 +67,7 @@ Signature-Base-String =
     Path + "\n" +
     Query-Parameters + "\n" +
     Authorization-Header-Parameters + "\n" +
-    Added-Signed-Headers (if any) + "\n" +
+    for each added signed header: added-signed-header-name:added-signed-header-value + "\n" +
     Timestamp +
     (omit below if Content-Length is 0)
     "\n" + Content-Type +
@@ -126,7 +126,7 @@ The signature base string is a concatenated string generated from the following 
 * `Path`: The HTTP request path with leading slash, e.g. `/resource/11`
 * `Parameters`: Any query parameters or empty string. This should be the exact string sent by the client, including urlencoding.
 * `Authorization-Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the id, nonce, realm, and version from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded (urlencoded)
-* `Added Signed Headers`: The normalized header names and values specified in the headers parameter of the Authorization header. Names should be lower-cased, sorted by name, separated from value by a colon and the value followed by a newline so each extra header is on its own line.
+* `Added Signed Headers`: The normalized header names and values specified in the headers parameter of the Authorization header. Names should be lower-cased, sorted by name, separated from value by a colon and the value followed by a newline so each extra header is on its own line. If there are no added signed headers, an empty line should not be added to the signature base string.
 * `Timestamp`:  The value of the X-Authorization-Timestamp header
 * `Content-Type`: The lowercase value of the "Content-type" header (or empty string if absent). Omit if Content-Length is 0.
 * `Body-Hash`: The base64 encoded SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit if Content-Length is 0. This should be identical to the string sent as the X-Authorization-Content-SHA256 header.
@@ -277,7 +277,7 @@ cryptographically secure PRNGs to avoid these problems.
 
 The request MAC only covers the HTTP `Host` header, the `Content-Type` header and optionally a given set of Headers. It does not cover any other headers that it does not know about which can often affect how the request body is interpreted by the server. If the server behavior is influenced by the presence or value of such headers, an attacker can manipulate the request headers without being detected. Implementers should use the `headers` feature to pass headers to be added to the signature via the `Authorization` header which is protected by the request MAC. The Signature Base String will then be responsible of adding these given headers to the Signature so they become part of the MAC.
 
-The response authentication, when performed, only covers the response Body (payload) and some of the request information 
+The response authentication, when performed, only covers the response Body (payload) and some of the request information
 provided by the client in it's request such as timestamp and nonce. It does not cover the HTTP status code or
 any other response header field (e.g. Location) which can affect the client's behaviour.
 
