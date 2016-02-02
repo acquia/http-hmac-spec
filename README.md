@@ -135,7 +135,7 @@ The signature base string is a concatenated string generated from the following 
 
 https://example.acquiapipet.net/v1.0/task-status/133?limit=10
 
-Assuming the client ID is efdde334-fe7b-11e4-a322-1697f925ec7b and base64 encoded secret key is W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=
+Assuming the ID is efdde334-fe7b-11e4-a322-1697f925ec7b and base64 encoded secret key is W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=
 
 Authorization header =
 ```
