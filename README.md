@@ -58,7 +58,7 @@ X-Authorization-Content-SHA256 : <HashedContent> (if Content-Length > 0)
 ```
 The HTTP client must not add the following HTTP Header to the request:
 
-X-Authenticated-Id : <ServerId> (Reserved for server to server communication)
+X-Authenticated-Id (reserved for internal server to server communication)
 
 ### Server
 
@@ -83,7 +83,7 @@ HMACAuthorization = "acquia-http-hmac" + " " +
                 "headers=" + AdditionalSignedHeaderNames + "," +
                 "signature=" + HMACSignature
 
-AdditionalSignedHeaders = "" or
+AdditionalSignedHeaderNames = "" or
     Lowercase( HTTP-Header-Name ) [ + ";" + Lowercase( HTTP-Header-Name ), for additional headers]
                 
 HMACSignature = Base64( HMAC-SHA256 ( SecretKey, UTF-8-Encoding-Of( StringToSign ) ) )
@@ -148,7 +148,7 @@ The signature base string is a concatenated string generated from the following 
 * `Path`: The HTTP request path with leading slash, e.g. `/resource/11`
 * `QueryParameters`: Any query parameters or empty string. This should be the exact string sent by the client, including urlencoding.
 * `AuthorizationHeaderParameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the id, nonce, realm, and version from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded (urlencoded)
-* `Added Signed Headers`: The normalized header names and values specified in the headers parameter of the Authorization header. Names should be lower-cased, sorted by name, separated from value by a colon and the value followed by a newline so each extra header is on its own line. If there are no added signed headers, an empty line should not be added to the signature base string.
+* `AdditionalSignedHeaders`: The normalized header names and values specified in the headers parameter of the Authorization header. Names should be lower-cased, sorted by name, separated from value by a colon and the value followed by a newline so each extra header is on its own line. If there are no added signed headers, an empty line should not be added to the signature base string.
 * `X-Authorization-Timestamp`:  The value of the X-Authorization-Timestamp header
 * `Content-Type`: The lowercase value of the "Content-type" header (or empty string if absent). Omit if Content-Length is 0.
 * `Body-Hash`: The base64 encoded SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit if Content-Length is 0. This should be identical to the string sent as the X-Authorization-Content-SHA256 header.
@@ -167,10 +167,10 @@ If the X-Authenticated-Id is present in the request, the client implementing the
 
 ## Overview of Response Header and Signature
 
-The pseudocode below illustrates construction of the HTTP "Authorization" header and signature for all non-HEAD requests:
+The pseudocode below illustrates construction of the HTTP "X-Server-Authorization-HMAC-SHA256" header and signature for all non-HEAD requests:
 
 ```
-HMACAuthorization = Base64( SHA256 ( ResponseStringToSign ) )
+HMACServerAuthorization = Base64( SHA256 ( ResponseStringToSign ) )
 
 ResponseStringToSign = Nonce + "\n" +
     X-Authorization-Timestamp + "\n" +
