@@ -45,45 +45,76 @@ TBD, see the Hawk spec for inspiration
 
 Production services implementing this spec must only accept requests using HTTPS.
 
-## Overview of Header and Signature
+## Overview of Request and Response Headers
+
+
+### Client
+The HTTP client signs the request by adding the following HTTP headers:
+
+```
+Authorization : <HMACAuthorization>
+X-Authorization-Timestamp : <Unix Timestamp In Seconds>
+X-Authorization-Content-SHA256 : <HashedContent> (if Content-Length > 0)
+```
+The HTTP client must not add the following HTTP Header to the request:
+
+X-Authenticated-Id : <ServerId> (Reserved for server to server communication)
+
+### Server
+
+If the server authenticates the request successfully, it will add the following HTTP headers to the response (for all non-HEAD requests):
+
+```
+X-Server-Authorization-HMAC-SHA256: <HMACServerAuthorization>
+```
+
+The client should verify the reponse HMAC which authenticates the response body back from the server.
+
+## Overview of Request Header and Signature
 
 The pseudocode below illustrates construction of the HTTP "Authorization" header and signature:
 
 ```
-Authorization: acquia-http-hmac realm="Example",
-               id="identifier",
-               nonce="d1954337-5319-4821-8427-115542e08d10",
-               version="2.0",
-               headers="",
-               signature="Signature"
+HMACAuthorization = "acquia-http-hmac" + " " +
+                "realm=" + Provider + "," +
+                "id=" + AccessKey + "," +
+                "nonce=" + HexV4OfRandomUUID + "," +
+                "version=" + HMACVersion + "," +
+                "headers=" + AdditionalSignedHeaderNames + "," +
+                "signature=" + HMACSignature
 
-X-Authorization-Timestamp: 1432075982
+AdditionalSignedHeaders = "" or
+    Lowercase( HTTP-Header-Name ) [ + ";" + Lowercase( HTTP-Header-Name ), for additional headers]
+                
+HMACSignature = Base64( HMAC-SHA256 ( SecretKey, UTF-8-Encoding-Of( StringToSign ) ) )
 
-Signature = Base64( HMAC( SecretKey, Signature-Base-String ) );
+StringToSign = HTTP-Verb + "\n" +
+   Host + "\n" +
+   Path + "\n" +
+   QueryParameters + "\n" +
+   AuthorizationHeaderParameters + "\n" +
+   [ AdditionalSignedHeaders, If the headers attribute is not empty, + "\n" ] + 
+   X-Authorization-Timestamp +
+   [ "\n" + Content-Type + 
+     "\n" + HashedContent, if Content-Length > 0 ]
 
-Signature-Base-String =
-    HTTP-Verb + "\n" +
-    Host + "\n" +
-    Path + "\n" +
-    Query-Parameters + "\n" +
-    Authorization-Header-Parameters + "\n" +
-    for each added signed header: added-signed-header-name:added-signed-header-value + "\n" +
-    Timestamp +
-    (omit below if Content-Length is 0)
-    "\n" + Content-Type +
-    "\n" + Body-Hash
-;
+AuthorizationHeaderParameters = "id=" + URLEncode( AccessKey ) + "&" + 
+   "nonce=" + URLEncode( HexV4OfRandomUUID ) + "&" +
+   "realm=" + URLEncode( Provider ) + "&" +
+   "version=" + URLEncode( Version )
+   
+AdditionalSignedHeaders = Lowercase( HTTP-Header-Name ) + ":" + HTTP-Header-Value 
+   [ + "\n" + Lowercase( HTTP-Header-Name ) + ":" + HTTP-Header-Value, for additional headers]
+    (must be sorted by Lowercase( HTTP-Header-Name ) )
+
+HashedContent = Base64( SHA256 ( Request-Body ) )
 ```
 
 `"\n"` denotes a Unix-style line feed (ASCII code `0x0A`).
 
-#### Secret Key
+### Authorization Header
 
-The secret key should be a 256 to 512 bit binary value. The secret key will normally be stored as a base64-encoded or hex-encoded string representation, but must be decoded to the binary value before use.
-
-#### Authorization Header
-
-The value of the `Authorization` header contains the following parts:
+The value of the `Authorization` header contains the following attributes:
 
 * `realm`: The provider, for example "Acquia", "MyCompany", etc.
 * `id`: The API key's unique identifier, which is an arbitrary string
@@ -92,10 +123,36 @@ The value of the `Authorization` header contains the following parts:
 * `headers`: a list of additional request headers that are to be included in the signature base string. These are lower-case, and separated with ;
 * `signature`: the Signature (base64 encoded) as described below.
 
-Each value should be enclosed in double quotes and urlencoded (percent encoded).
+Each attribute value should be enclosed in double quotes and urlencoded (percent encoded).
 
 Note that the name of this (standard) header is misleading - it carries authentication information.
 
+#### Signature
+
+The signature is a base64 encoded binary HMAC-SHA256 digest generated from the
+following parts:
+
+* `SecretKey`: The API key's shared secret
+* `StringToSign`: The string being signed as described below
+
+#### Secret Key
+
+The secret key should be a 256 to 512 bit binary value. The secret key will normally be stored as a base64-encoded or hex-encoded string representation, but must be decoded to the binary value before use.
+
+#### String To Sign
+
+The signature base string is a concatenated string generated from the following parts:
+
+* `HTTP-Verb`: The uppercase HTTP request method e.g. "GET", "POST"
+* `Host`: The (lowercase) hostname, matching the HTTP "Host" request header field (including any port number)
+* `Path`: The HTTP request path with leading slash, e.g. `/resource/11`
+* `QueryParameters`: Any query parameters or empty string. This should be the exact string sent by the client, including urlencoding.
+* `AuthorizationHeaderParameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the id, nonce, realm, and version from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded (urlencoded)
+* `Added Signed Headers`: The normalized header names and values specified in the headers parameter of the Authorization header. Names should be lower-cased, sorted by name, separated from value by a colon and the value followed by a newline so each extra header is on its own line. If there are no added signed headers, an empty line should not be added to the signature base string.
+* `X-Authorization-Timestamp`:  The value of the X-Authorization-Timestamp header
+* `Content-Type`: The lowercase value of the "Content-type" header (or empty string if absent). Omit if Content-Length is 0.
+* `Body-Hash`: The base64 encoded SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit if Content-Length is 0. This should be identical to the string sent as the X-Authorization-Content-SHA256 header.
+  
 #### X-Authorization-Timestamp Header
 
 A Unix timestamp (integer seconds since Jan 1, 1970 UTC). Required for all requests. If this value differs by more than 900 seconds (15 minutes) from the time of the server, the request will be rejected.
@@ -108,28 +165,25 @@ The base64 encoded SHA-256 hash value used to generate the signature base string
 
 If the X-Authenticated-Id is present in the request, the client implementing the validation of the request should reject the request and return "unauthenticated". This header is reserved for servers or proxies who want to validate requests and forward requests to backends. Backends can read this added header to understand if it was authenticated. Use this with caution and careful consideration as adding this header only guarantees it was authenticated to that ID.
 
-#### Signature
+## Overview of Response Header and Signature
 
-The signature is a base64 encoded binary HMAC digest generated from the
-following parts:
+The pseudocode below illustrates construction of the HTTP "Authorization" header and signature for all non-HEAD requests:
 
-* `HMAC`: HMAC-sha256 algorithm
-* `SecretKey`: The API key's shared secret
-* `Signature Base String`: The string being signed as described below
+```
+HMACAuthorization = Base64( SHA256 ( ResponseStringToSign ) )
 
-#### Signature Base String
+ResponseStringToSign = Nonce + "\n" +
+    X-Authorization-Timestamp + "\n" +
+    Response-Body 
+```
 
-The signature base string is a concatenated string generated from the following parts:
+### Response Signature Base String
 
-* `HTTP-Verb`: The uppercase HTTP request method e.g. "GET", "POST"
-* `Host`: The (lowercase) hostname, matching the HTTP "Host" request header field (including any port number)
-* `Path`: The HTTP request path with leading slash, e.g. `/resource/11`
-* `Parameters`: Any query parameters or empty string. This should be the exact string sent by the client, including urlencoding.
-* `Authorization-Header-Parameters`: normalized parameters similar to section 9.1.1 of OAuth 1.0a.  The parameters are the id, nonce, realm, and version from the Authorization header. Parameters are sorted by name and separated by '&' with name and value separated by =, percent encoded (urlencoded)
-* `Added Signed Headers`: The normalized header names and values specified in the headers parameter of the Authorization header. Names should be lower-cased, sorted by name, separated from value by a colon and the value followed by a newline so each extra header is on its own line. If there are no added signed headers, an empty line should not be added to the signature base string.
-* `Timestamp`:  The value of the X-Authorization-Timestamp header
-* `Content-Type`: The lowercase value of the "Content-type" header (or empty string if absent). Omit if Content-Length is 0.
-* `Body-Hash`: The base64 encoded SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit if Content-Length is 0. This should be identical to the string sent as the X-Authorization-Content-SHA256 header.
+The response signature base string is a concatenated string generated from the following parts:
+
+* `Nonce`:  The nonce that was sent in the Authorization header.
+* `X-Authorization-Timestamp`: The timestamp that was sent in the X-Authorization-Timestamp header
+* `Response-Body`: The response body (or empty string).
 
 #### GET Example
 
@@ -201,25 +255,7 @@ application/json
 9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI=
 ```
 
-## Response Validation
-
-Except for HEAD requests, the reponse from the server must include the following header
-
-Response header =
-```
-X-Server-Authorization-HMAC-SHA256: M4wYp1MKvDpQtVOnN7LVt9L8or4pKyVLhfUFVJxHemU=
-```
-
-The client should verify the reponse HMAC which authenticates the response body back from the server.
-
-#### Response Signature Base String
-
-
-The response signature base string is a concatenated string generated from the following parts:
-
-* `Nonce`:  The nonce that was sent in the Authorization header.
-* `Timestamp`: The timestamp that was sent in the X-Authorization-Timestamp header
-* `Body`: The response body (or empty string).
+### Response Example
 
 Signature-Base-String =
 
