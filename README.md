@@ -36,6 +36,7 @@ Note: 2.0 is not backwards compatible to 1.0 as the message to sign and the Head
 <p></p>
 - [**Further Reading**](#further-reading)
 - [**Implementations**](#implementations)
+- [**Testing**](#testing)
 - [**Attribution**](#attribution)
 
 ## Introduction
@@ -341,6 +342,10 @@ for frequently asked questions and a list of implementations in various language
 
 ## Implementations
 List Auth Implementations here (go, php, bash, etc..)
+
+## Testing
+
+This version of the spec can be tested using the [test fixtures file](fixtures.json). These fixtures provide the required inputs and expectations to ensure that the different implementations are compatible.
 
 ## Attribution
 

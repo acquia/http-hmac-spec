@@ -1,0 +1,172 @@
+{
+  "version": "0.1",
+  "spec_versions": ["1.0", "2.0"],
+  "fixtures" : {
+    "2.0": [
+      {
+	"input": {
+          "name": "GET 1",
+          "description": "Valid GET request",
+	  "host": "example.acquiapipet.net",
+	  "url": "https://example.acquiapipet.net/v1.0/task-status/133?limit=10",
+          "method": "GET",
+	  "content_body": "",
+	  "content_type": "application/json",
+	  "content_sha": "",
+	  "timestamp": 1432075982,
+	  "realm": "Pipet service",
+	  "id": "efdde334-fe7b-11e4-a322-1697f925ec7b",
+	  "secret": "W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=",
+	  "nonce": "d1954337-5319-4821-8427-115542e08d10",
+	  "signed_headers": [],
+	  "headers" : {}
+        },
+	"expectations": {
+          "authorization_header": "acquia-http-hmac id=\"efdde334-fe7b-11e4-a322-1697f925ec7b\",nonce=\"d1954337-5319-4821-8427-115542e08d10\",realm=\"Pipet%20service\",signature=\"MRlPr/Z1WQY2sMthcaEqETRMw4gPYXlPcTpaLWS2gcc=\",version=\"2.0\"",
+          "signable_message": "GET\nexample.acquiapipet.net\n/v1.0/task-status/133\nlimit=10\nid=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&version=2.0\n1432075982",
+          "message_signature": "MRlPr/Z1WQY2sMthcaEqETRMw4gPYXlPcTpaLWS2gcc=",
+          "response_signature": "M4wYp1MKvDpQtVOnN7LVt9L8or4pKyVLhfUFVJxHemU=",
+          "response_body": "{\"id\": 133, \"status\": \"done\"}"
+        }
+      },
+      {
+	"input": {
+          "name": "GET 2",
+          "description": "Valid GET request",
+	  "host": "example.acquiapipet.net",
+	  "url": "https://example.acquiapipet.net/v1.0/task-status/145?limit=1",
+          "method": "GET",
+	  "content_body": "",
+	  "content_type": "application/json",
+	  "content_sha": "",
+	  "timestamp": 1432075982,
+	  "realm": "Pipet service",
+	  "id": "615d6517-1cea-4aa3-b48e-96d83c16c4dd",
+	  "secret": "TXkgU2VjcmV0IEtleSBUaGF0IGlzIFZlcnkgU2VjdXJl",
+	  "nonce": "24c0c836-4f6c-4ed6-a6b0-e091d75ea19d",
+	  "signed_headers": [],
+	  "headers" : {}
+        },
+	"expectations": {
+          "authorization_header": "acquia-http-hmac id=\"615d6517-1cea-4aa3-b48e-96d83c16c4dd\",nonce=\"24c0c836-4f6c-4ed6-a6b0-e091d75ea19d\",realm=\"Pipet%20service\",signature=\"1Ku5UroiW1knVP6GH4l7Z4IuQSRxZO2gp/e5yhapv1s=\",version=\"2.0\"",
+          "signable_message": "GET\nexample.acquiapipet.net\n/v1.0/task-status/145\nlimit=1\nid=615d6517-1cea-4aa3-b48e-96d83c16c4dd&nonce=24c0c836-4f6c-4ed6-a6b0-e091d75ea19d&realm=Pipet%20service&version=2.0\n1432075982",
+          "message_signature": "1Ku5UroiW1knVP6GH4l7Z4IuQSRxZO2gp/e5yhapv1s=",
+          "response_signature": "C98MEJHnQSNiYCxmI4CxJegO62sGZdzEEiSXgSIoxlo=",
+          "response_body": "{\"id\": 145, \"status\": \"in-progress\"}"
+        }
+      },
+      {
+	"input": {
+          "name": "GET 3",
+          "description": "Valid GET request with signed headers",
+	  "host": "example.pipeline.io",
+	  "url": "https://example.pipeline.io/api/v1/ci/pipelines",
+          "method": "GET",
+	  "content_body": "",
+	  "content_type": "application/json",
+	  "content_sha": "",
+	  "timestamp": 1432075982,
+	  "realm": "CIStore",
+	  "id": "e7fe97fa-a0c8-4a42-ab8e-2c26d52df059",
+	  "secret": "bXlzZWNyZXRzZWNyZXR0aGluZ3Rva2VlcA==",
+	  "nonce": "a9938d07-d9f0-480c-b007-f1e956bcd027",
+	  "signed_headers": [ "X-Custom-Signer1", "X-Custom-Signer2"],
+	  "headers" : {
+            "X-Custom-Signer1": "custom-1",
+            "X-Custom-Signer2": "custom-2"
+	  }
+        },
+	"expectations": {
+          "authorization_header": "acquia-http-hmac headers=\"X-Custom-Signer1%3BX-Custom-Signer2\",id=\"e7fe97fa-a0c8-4a42-ab8e-2c26d52df059\",nonce=\"a9938d07-d9f0-480c-b007-f1e956bcd027\",realm=\"CIStore\",signature=\"yoHiYvx79ssSDIu3+OldpbFs8RsjrMXgRoM89d5t+zA=\",version=\"2.0\"",
+          "signable_message": "GET\nexample.pipeline.io\n/api/v1/ci/pipelines\n\nid=e7fe97fa-a0c8-4a42-ab8e-2c26d52df059&nonce=a9938d07-d9f0-480c-b007-f1e956bcd027&realm=CIStore&version=2.0\nx-custom-signer1:custom-1\nx-custom-signer2:custom-2\n1432075982",
+          "message_signature": "yoHiYvx79ssSDIu3+OldpbFs8RsjrMXgRoM89d5t+zA=",
+          "response_signature": "cUDFSS5tN5vBBS7orIfUag8jhkaGouBb/o8fstUvTF8=",
+          "response_body": "[{\"pipeline_id\":\"39b5d58d-0a8f-437d-8dd6-4da50dcc87b7\",\"sitename\":\"enterprise-g1:sfwiptravis\",\"name\":\"pipeline.yml\",\"last_job_id\":\"810e4344-1bed-4fd0-a642-1ba17eb996d5\",\"last_branch\":\"validate-yaml\",\"last_requested\":\"2016-03-25T20:26:39.000Z\",\"last_finished\":null,\"last_status\":\"succeeded\",\"last_duration\":null}]"
+        }
+      },
+      {
+	"input": {
+          "name": "POST 1",
+          "description": "Valid POST request",
+	  "host": "example.acquiapipet.net",
+	  "url": "https://example.acquiapipet.net/v1.0/task",
+          "method": "POST",
+	  "content_body": "{\"method\":\"hi.bob\",\"params\":[\"5\",\"4\",\"8\"]}",
+	  "content_type": "application/json",
+	  "content_sha": "6paRNxUA7WawFxJpRp4cEixDjHq3jfIKX072k9slalo=",
+	  "timestamp": 1432075982,
+	  "realm": "Pipet service",
+	  "id": "efdde334-fe7b-11e4-a322-1697f925ec7b",
+	  "secret": "W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=",
+	  "nonce": "d1954337-5319-4821-8427-115542e08d10",
+	  "signed_headers": [],
+	  "headers" : {}
+        },
+	"expectations": {
+          "authorization_header": "acquia-http-hmac id=\"efdde334-fe7b-11e4-a322-1697f925ec7b\",nonce=\"d1954337-5319-4821-8427-115542e08d10\",realm=\"Pipet%20service\",signature=\"XDBaXgWFCY3aAgQvXyGXMbw9Vds2WPKJe2yP+1eXQgM=\",version=\"2.0\"",
+          "signable_message": "POST\nexample.acquiapipet.net\n/v1.0/task\n\nid=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&version=2.0\n1432075982\napplication/json\n6paRNxUA7WawFxJpRp4cEixDjHq3jfIKX072k9slalo=",
+          "message_signature": "XDBaXgWFCY3aAgQvXyGXMbw9Vds2WPKJe2yP+1eXQgM=",
+          "response_signature": "",
+          "response_body": ""
+        }
+      },
+      {
+	"input": {
+          "name": "POST 2",
+          "description": "Valid POST request with signed headers.",
+	  "host": "example.pipeline.io",
+	  "url": "https://example.pipeline.io/api/v1/ci/pipelines/39b5d58d-0a8f-437d-8dd6-4da50dcc87b7/start",
+          "method": "POST",
+	  "content_body": "{\"cloud_endpoint\":\"https://cloudapi.acquia.com/v1\",\"cloud_user\":\"example@acquia.com\",\"cloud_pass\":\"password\",\"branch\":\"validate\"}",
+	  "content_type": "application/json",
+	  "content_sha": "2YGTI4rcSnOEfd7hRwJzQ2OuJYqAf7jzyIdcBXCGreQ=",
+	  "timestamp": 1449578521,
+	  "realm": "CIStore",
+	  "id": "e7fe97fa-a0c8-4a42-ab8e-2c26d52df059",
+	  "secret": "bXlzZWNyZXRzZWNyZXR0aGluZ3Rva2VlcA==",
+	  "nonce": "a9938d07-d9f0-480c-b007-f1e956bcd027",
+	  "signed_headers": [ "X-Custom-Signer1", "X-Custom-Signer2"],
+	  "headers" : {
+            "X-Custom-Signer1": "custom-1",
+            "X-Custom-Signer2": "custom-2"
+	  }
+        },
+	"expectations": {
+          "authorization_header": "acquia-http-hmac headers=\"X-Custom-Signer1%3BX-Custom-Signer2\",id=\"e7fe97fa-a0c8-4a42-ab8e-2c26d52df059\",nonce=\"a9938d07-d9f0-480c-b007-f1e956bcd027\",realm=\"CIStore\",signature=\"0duvqeMauat7pTULg3EgcSmBjrorrcRkGKxRDtZEa1c=\",version=\"2.0\"",
+          "signable_message": "POST\nexample.pipeline.io\n/api/v1/ci/pipelines/39b5d58d-0a8f-437d-8dd6-4da50dcc87b7/start\n\nid=e7fe97fa-a0c8-4a42-ab8e-2c26d52df059&nonce=a9938d07-d9f0-480c-b007-f1e956bcd027&realm=CIStore&version=2.0\nx-custom-signer1:custom-1\nx-custom-signer2:custom-2\n1449578521\napplication/json\n2YGTI4rcSnOEfd7hRwJzQ2OuJYqAf7jzyIdcBXCGreQ=",
+          "message_signature": "0duvqeMauat7pTULg3EgcSmBjrorrcRkGKxRDtZEa1c=",
+          "response_signature": "SlOYi3pUZADkzU9wEv7kw3hmxjlEyMqBONFEVd7iDbM=",
+          "response_body": "\"57674bb1-f2ce-4d0f-bfdc-736a78aa027a\""
+        }
+      }
+    ]
+  },
+  "skeletons": {
+    "2.0": {
+      "input": {
+        "name": "",
+        "description": "",
+        "host": "",
+        "url": "",
+        "method": "",
+        "content_body": "",
+        "content_type": "",
+        "content_sha": "",
+        "timestamp": 0,
+        "realm": "",
+        "id": "",
+        "secret": "",
+        "nonce": "",
+        "signed_headers": [],
+        "headers" : {}
+      },
+      "expectations": {
+        "authorization_header": "",
+        "signable_message": "",
+        "message_signature": "",
+        "response_signature": "",
+        "response_body": ""
+      }
+    }
+  }
+}
