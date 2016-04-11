@@ -122,7 +122,7 @@ following parts:
 
 The signature base string is a concatenated string generated from the following parts:
 
-* `HTTP-Verb`: The uppercase HTTP request method e.g. "GET", "POST"
+* `HTTP-Verb`: The HTTP request method e.g. "GET", "POST". Note that request methods are case-sensitive.
 * `Host`: The (lowercase) hostname, matching the HTTP "Host" request header field (including any port number)
 * `Path`: The HTTP request path with leading slash, e.g. `/resource/11`
 * `Parameters`: Any query parameters or empty string. This should be the exact string sent by the client, including urlencoding.
