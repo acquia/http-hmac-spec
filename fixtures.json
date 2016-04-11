@@ -106,7 +106,7 @@
           "authorization_header": "acquia-http-hmac id=\"efdde334-fe7b-11e4-a322-1697f925ec7b\",nonce=\"d1954337-5319-4821-8427-115542e08d10\",realm=\"Pipet%20service\",signature=\"XDBaXgWFCY3aAgQvXyGXMbw9Vds2WPKJe2yP+1eXQgM=\",version=\"2.0\"",
           "signable_message": "POST\nexample.acquiapipet.net\n/v1.0/task\n\nid=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d10&realm=Pipet%20service&version=2.0\n1432075982\napplication/json\n6paRNxUA7WawFxJpRp4cEixDjHq3jfIKX072k9slalo=",
           "message_signature": "XDBaXgWFCY3aAgQvXyGXMbw9Vds2WPKJe2yP+1eXQgM=",
-          "response_signature": "",
+          "response_signature": "LusIUHmqt9NOALrQ4N4MtXZEFE03MjcDjziK+vVqhvQ=",
           "response_body": ""
         }
       },
