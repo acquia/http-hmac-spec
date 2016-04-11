@@ -187,26 +187,14 @@ The response signature base string is a concatenated string generated from the f
 
 #### GET Example
 
-https://example.acquiapipet.net/v1.0/task-status/133?limit=10
+Make a GET request to https://example.acquiapipet.net/v1.0/task-status/133?limit=10 with the id = efdde334-fe7b-11e4-a322-1697f925ec7b and Secret Key (Base64 Encoded) = W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI= on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the realm = 'Pipet%20Service'
 
-Assuming the ID is efdde334-fe7b-11e4-a322-1697f925ec7b and base64 encoded secret key is W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=
-
-Authorization header =
-```
-Authorization: acquia-http-hmac realm="Pipet%20service",
-               id="efdde334-fe7b-11e4-a322-1697f925ec7b",
-               nonce="d1954337-5319-4821-8427-115542e08d10",
-               version="2.0",
-               headers="",
-               signature="MRlPr/Z1WQY2sMthcaEqETRMw4gPYXlPcTpaLWS2gcc="
-```
-
-Other headers =
+The following X-Authorization-Timestamp header will be added to the HTTP request
 ```
 X-Authorization-Timestamp: 1432075982
 ```
 
-Signature-Base-String =
+The following StringToSign, with a randomly generated nonce (in this example nonce = d1954337-5319-4821-8427-115542e08d10), will be built
 ```
 GET
 example.acquiapipet.net
@@ -216,34 +204,42 @@ id=efdde334-fe7b-11e4-a322-1697f925ec7b&nonce=d1954337-5319-4821-8427-115542e08d
 1432075982
 ```
 
-note that content type and body hash are omitted for GET.
-
-#### POST Example
-
-https://example.acquiapipet.net/v1.0/task/
-
-Other headers:
-```
-X-Authorization-Timestamp: 1432075982
-Content-Type: application/json
-X-Authorization-Content-SHA256: 9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI=
-```
-
-body:
-```
-{"method":"hi.bob","params":["5","4","8"]}
-```
-
-Authorization header =
+The following Authorization header will be added to the HTTP request (the signature is based on the StringToSign and SecretKey)
 ```
 Authorization: acquia-http-hmac realm="Pipet%20service",
                id="efdde334-fe7b-11e4-a322-1697f925ec7b",
                nonce="d1954337-5319-4821-8427-115542e08d10",
                version="2.0",
-               signature="XDBaXgWFCY3aAgQvXyGXMbw9Vds2WPKJe2yP+1eXQgM="
+               headers="",
+               signature="MRlPr/Z1WQY2sMthcaEqETRMw4gPYXlPcTpaLWS2gcc="
 ```
 
-Signature-Base-String =
+#### POST Example
+
+
+Make a POST request to https://example.acquiapipet.net/v1.0/task/ with the id = efdde334-fe7b-11e4-a322-1697f925ec7b and Secret Key (Base64 Encoded) = W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI= on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the realm = 'Pipet%20Service' and the following HTTP headers/body:
+
+Request Headers
+```
+Content-Type: application/json
+```
+
+Request Body
+```
+{"method":"hi.bob","params":["5","4","8"]}
+```
+
+The following X-Authorization-Timestamp header will be added to the HTTP request
+```
+X-Authorization-Timestamp: 1432075982
+```
+
+The following X-Authorization-Content-SHA256 header will be calculated from the Request Body and added to the HTTP request
+```
+X-Authorization-Content-SHA256: 9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI=
+```
+
+The following StringToSign, with a randomly generated nonce (in this example nonce = d1954337-5319-4821-8427-115542e08d10), will be built
 ```
 POST
 example.acquiapipet.net
@@ -255,14 +251,35 @@ application/json
 9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI=
 ```
 
-### Response Example
+The following Authorization header will be added to the HTTP request (the signature is based on the StringToSign and SecretKey)
+```
+Authorization: acquia-http-hmac realm="Pipet%20service",
+               id="efdde334-fe7b-11e4-a322-1697f925ec7b",
+               nonce="d1954337-5319-4821-8427-115542e08d10",
+               version="2.0",
+               signature="XDBaXgWFCY3aAgQvXyGXMbw9Vds2WPKJe2yP+1eXQgM="
+```
 
-Signature-Base-String =
 
+### Server Response Example
+
+Return a response based on a non-HEAD request made on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the request's nonce = d1954337-5319-4821-8427-115542e08d10 and the following HTTP response body:
+
+Response Body
+```
+{"id": 133, "status": "done"}
+```
+
+The following ResponseStringToSign will be built
 ```
 d1954337-5319-4821-8427-115542e08d10
 1432075982
 {"id": 133, "status": "done"}
+```
+
+The following X-Server-Authorization-HMAC-SH256 will be added to HTTP response (the value is based on the ResponseStringToSign)
+```
+X-Server-Authorization-HMAC-SHA256: 
 ```
 
 ## Security Considerations
