@@ -68,7 +68,7 @@ If the server authenticates the request successfully, it will add the following 
 X-Server-Authorization-HMAC-SHA256: <HMACServerAuthorization>
 ```
 
-The client should verify the reponse HMAC which authenticates the response body back from the server.
+The client should verify the response HMAC which authenticates the response body back from the server.
 
 ## Overview of Request Header and Signature
 
