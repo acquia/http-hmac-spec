@@ -151,7 +151,7 @@ The signature base string is a concatenated string generated from the following 
 * `AdditionalSignedHeaders`: The normalized header names and values specified in the headers parameter of the Authorization header. Names should be lower-cased, sorted by name, separated from value by a colon and the value followed by a newline so each extra header is on its own line. If there are no added signed headers, an empty line should not be added to the signature base string.
 * `X-Authorization-Timestamp`:  The value of the X-Authorization-Timestamp header
 * `Content-Type`: The lowercase value of the "Content-type" header (or empty string if absent). Omit if Content-Length is 0.
-* `Body-Hash`: The base64 encoded SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit if Content-Length is 0. This should be identical to the string sent as the X-Authorization-Content-SHA256 header.
+* `HashedContent`: The base64 encoded SHA-256 digest of the raw body of the HTTP request, for POST, PUT, PATCH, DELETE or other requests that may have a body. Omit if Content-Length is 0. This should be identical to the string sent as the X-Authorization-Content-SHA256 header.
   
 #### X-Authorization-Timestamp Header
 
@@ -170,14 +170,22 @@ If the X-Authenticated-Id is present in the request, the client implementing the
 The pseudocode below illustrates construction of the HTTP "X-Server-Authorization-HMAC-SHA256" header and signature for all non-HEAD requests:
 
 ```
-HMACServerAuthorization = Base64( SHA256 ( ResponseStringToSign ) )
+HMACServerAuthorization = Base64( HMAC-SHA256 ( SecretKey, UTF-8-Encoding-Of( ResponseStringToSign ) ) )
 
 ResponseStringToSign = Nonce + "\n" +
     X-Authorization-Timestamp + "\n" +
     Response-Body 
 ```
 
-### Response Signature Base String
+#### HMAC Server Authorization
+
+The server authorization is a base64 encoded binary HMAC-SHA256 digest generated from the
+following parts:
+
+* `SecretKey`: The API key's shared secret
+* `ResponseStringToSign`: The string being signed as described below
+
+### Response String To Sign
 
 The response signature base string is a concatenated string generated from the following parts:
 
@@ -187,7 +195,7 @@ The response signature base string is a concatenated string generated from the f
 
 #### GET Example
 
-Make a GET request to https://example.acquiapipet.net/v1.0/task-status/133?limit=10 with the id = efdde334-fe7b-11e4-a322-1697f925ec7b and Secret Key (Base64 Encoded) = W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI= on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the realm = 'Pipet%20Service'
+Make a GET request to https://example.acquiapipet.net/v1.0/task-status/133?limit=10 with the id = 'efdde334-fe7b-11e4-a322-1697f925ec7b' and Secret Key (Base64 Encoded) = 'W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=' on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the realm = 'Pipet service'
 
 The following X-Authorization-Timestamp header will be added to the HTTP request
 ```
@@ -217,7 +225,7 @@ Authorization: acquia-http-hmac realm="Pipet%20service",
 #### POST Example
 
 
-Make a POST request to https://example.acquiapipet.net/v1.0/task/ with the id = efdde334-fe7b-11e4-a322-1697f925ec7b and Secret Key (Base64 Encoded) = W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI= on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the realm = 'Pipet%20Service' and the following HTTP headers/body:
+Make a POST request to https://example.acquiapipet.net/v1.0/task/ with the id = 'efdde334-fe7b-11e4-a322-1697f925ec7b' and Secret Key (Base64 Encoded) = 'W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=' on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the realm = 'Pipet service' and the following HTTP headers/body:
 
 Request Headers
 ```
@@ -251,7 +259,7 @@ application/json
 9tn9ZdUBc0BgXg2UdnUX7bi4oTUL9wakvzwBN16H+TI=
 ```
 
-The following Authorization header will be added to the HTTP request (the signature is based on the StringToSign and SecretKey)
+The following Authorization header will be added to the HTTP request (the signature is based on the StringToSign and Secret Key)
 ```
 Authorization: acquia-http-hmac realm="Pipet%20service",
                id="efdde334-fe7b-11e4-a322-1697f925ec7b",
@@ -263,7 +271,7 @@ Authorization: acquia-http-hmac realm="Pipet%20service",
 
 ### Server Response Example
 
-Return a response based on a non-HEAD request made on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the request's nonce = d1954337-5319-4821-8427-115542e08d10 and the following HTTP response body:
+Return a response based on a non-HEAD request made on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the request's nonce = 'd1954337-5319-4821-8427-115542e08d10', Secret Key (Base64 Encoded) = 'W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=', and the following HTTP response body:
 
 Response Body
 ```
@@ -277,10 +285,11 @@ d1954337-5319-4821-8427-115542e08d10
 {"id": 133, "status": "done"}
 ```
 
-The following X-Server-Authorization-HMAC-SH256 will be added to HTTP response (the value is based on the ResponseStringToSign)
+The following X-Server-Authorization-HMAC-SH256 will be added to HTTP response (the value is based on the ResponseStringToSign and Secret Key)
 ```
-X-Server-Authorization-HMAC-SHA256: 
+X-Server-Authorization-HMAC-SHA256: M4wYp1MKvDpQtVOnN7LVt9L8or4pKyVLhfUFVJxHemU=
 ```
+
 
 ## Security Considerations
 
