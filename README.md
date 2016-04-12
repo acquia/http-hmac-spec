@@ -19,11 +19,14 @@ Note: 2.0 is not backwards compatible to 1.0 as the message to sign and the Head
 
 - [**Introduction**](#introduction)
 - [**Specification**](#spec)
-- [**Overview of Request and Response Headers**](#overview-of-request-and-response)
+- [**Overview of Request and Response Headers**](#overview-of-request-and-response-headers)
   - [Client](#client)
   - [Server](#server)
 - [**Overview of Request Header and Signature**](#overview-of-request-header-and-signature)
 - [**Overview of Response Header and Signature**](#overview-of-response-header-and-signature)
+- [**Examples**](#examples)
+  - [Request Examples](#request-examples)
+  - [Response Examples](#response-examples)
 - [**Security Considerations**](#security-considerations)
   - [MAC Keys Transmission](#mac-keys-transmission)
   - [Confidentiality of Requests](#confidentiality-of-requests)
@@ -49,7 +52,6 @@ TBD, see the Hawk spec for inspiration
 Production services implementing this spec must only accept requests using HTTPS.
 
 ## Overview of Request and Response Headers
-
 
 ### Client
 The HTTP client signs the request by adding the following HTTP headers:
@@ -196,6 +198,10 @@ The response signature base string is a concatenated string generated from the f
 * `X-Authorization-Timestamp`: The timestamp that was sent in the X-Authorization-Timestamp header
 * `Response-Body`: The response body (or empty string).
 
+## Examples
+
+### Request Examples 
+
 #### GET Example
 
 Make a GET request to https://example.acquiapipet.net/v1.0/task-status/133?limit=10 with the id = 'efdde334-fe7b-11e4-a322-1697f925ec7b' and Secret Key (Base64 Encoded) = 'W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=' on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the realm = 'Pipet service'
@@ -271,8 +277,9 @@ Authorization: acquia-http-hmac realm="Pipet%20service",
                signature="XDBaXgWFCY3aAgQvXyGXMbw9Vds2WPKJe2yP+1eXQgM="
 ```
 
+### Response Examples
 
-### Server Response Example
+#### Server Response Example
 
 Return a response based on a non-HEAD request made on Thursday 19 May 2015 22:53:02 GMT (Unix Timestamp = 1432075982) with the request's nonce = 'd1954337-5319-4821-8427-115542e08d10', Secret Key (Base64 Encoded) = 'W5PeGMxSItNerkNFqQMfYiJvH14WzVJMy54CPoTAYoI=', and the following HTTP response body:
 
