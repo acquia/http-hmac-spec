@@ -19,6 +19,9 @@ Note: 2.0 is not backwards compatible to 1.0 as the message to sign and the Head
 
 - [**Introduction**](#introduction)
 - [**Specification**](#spec)
+- [**Overview of Request and Response Headers**](#overview-of-header-and-signature)
+  - [Client](#overview-of-client-header-and-signature)
+  - [Server](#overview-of-server-header-and-signature)
 - [**Overview of Header and Signature**](#overview-of-header-and-signature)
 - [**Response Validation**](#response-validation)
 - [**Security Considerations**](#security-considerations)
@@ -76,12 +79,12 @@ The pseudocode below illustrates construction of the HTTP "Authorization" header
 
 ```
 HMACAuthorization = "acquia-http-hmac" + " " +
-                "realm=" + Provider + "," +
-                "id=" + AccessKey + "," +
-                "nonce=" + HexV4OfRandomUUID + "," +
-                "version=" + HMACVersion + "," +
-                "headers=" + AdditionalSignedHeaderNames + "," +
-                "signature=" + HMACSignature
+                "realm=" + DoubleQuoteEnclose( URLEncode( Provider ) ) + "," +
+                "id=" + DoubleQuoteEnclose( URLEncode( AccessKey ) ) + "," +
+                "nonce=" + DoubleQuoteEnclose( URLEncode( HexV4OfRandomUUID ) )+ "," +
+                "version=" + DoubleQuoteEnclose( URLEncode( HMACVersion ) ) + "," +
+                "headers=" + DoubleQuoteEnclose( URLEncode( AdditionalSignedHeaderNames ) ) + "," +
+                "signature=" + DoubleQuoteEnclose( URLEncode( HMACSignature ) ) 
 
 AdditionalSignedHeaderNames = "" or
     Lowercase( HTTP-Header-Name ) [ + ";" + Lowercase( HTTP-Header-Name ), for additional headers]
