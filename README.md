@@ -427,8 +427,6 @@ Some have v1 implementation as well.
 * [Java](https://github.com/acquia/http-hmac-java)
 * [Go](https://github.com/acquia/http-hmac-go)
 * [Ruby](https://github.com/acquia/http-hmac-ruby)
-
-### v1 Only
 * [PHP](https://github.com/acquia/http-hmac-php)
 
 ## Attribution
